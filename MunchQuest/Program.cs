@@ -1,11 +1,6 @@
-﻿// You'll be using Visual Studio Code to develop a small mini-game. Your application should establish the basics of the game, including updating player state, manipulating player movement, and consuming and regenerating a food object. You'll develop each of those features and run a simplified game test.
+﻿// Project specification
+// The Starter code includes the following code features:
 
-// Project specification
-// The Starter code project for this module includes a Program.cs file with the following code features:
-
-// Output
-
-// Copy
 // - The code declares the following variables:
 //     - Variables to determine the size of the Terminal window.
 //     - Variables to track the locations of the player and food.
@@ -106,8 +101,6 @@ void ChangePlayer()
   {
     FreezePlayer();
   }
-
-
 }
 
 // Temporarily stops the player from moving
@@ -117,8 +110,8 @@ void FreezePlayer()
   player = states[0];
 }
 
-// Reads directional input from the console and moves the player.
-// The allowExitOnNonDirectionalInput optional parameter allows the game to exit if nondirectional key is pressed.
+// Reads input from the console and moves the player.
+// The allowExitOnNonDirectionalInput optional parameter terminates game if nondirectional key is pressed.
 // The turboMode optional parameter allows the player to move faster if certain food is eaten.
 void Move(bool allowExitOnNonDirectionalInput = false, bool turboMode = true)
 {
