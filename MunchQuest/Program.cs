@@ -159,6 +159,19 @@ void Move(bool allowExitOnNonDirectionalInput = true)
     // Draw the player at the new location
     Console.SetCursorPosition(playerX, playerY);
     Console.Write(player);
+
+    // Check if the player consumed the food
+    if (FoodIsEaten())
+    {
+        ChangePlayer();
+        FreezePlayer();
+        ShowFood();
+    }
+}
+
+bool FoodIsEaten()
+{
+  return playerX == foodX && playerY == foodY;
 }
 
 // Clears the console, displays the food and player
