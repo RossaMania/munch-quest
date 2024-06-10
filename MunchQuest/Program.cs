@@ -100,6 +100,12 @@ void ChangePlayer()
     player = states[food];
     Console.SetCursorPosition(playerX, playerY);
     Console.Write(player);
+
+    if (food == 2)
+    {
+        // Freeze player movement
+        FreezePlayer();
+    }
 }
 
 // Temporarily stops the player from moving
@@ -164,7 +170,6 @@ void Move(bool allowExitOnNonDirectionalInput = true)
     if (FoodIsEaten())
     {
         ChangePlayer();
-        FreezePlayer();
         ShowFood();
     }
 }
@@ -182,3 +187,4 @@ void InitializeGame()
     Console.SetCursorPosition(0, 0);
     Console.Write(player);
 }
+
