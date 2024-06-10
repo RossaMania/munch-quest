@@ -109,7 +109,8 @@ void FreezePlayer()
     player = states[0];
 }
 
-// Reads directional input from the Console and moves the player
+// Reads directional input from the Console and moves the player.
+// The allowExitOnNonDirectionalInput optional parameter allows the game to exit if nondirectional key is pressed.
 void Move(bool allowExitOnNonDirectionalInput = true)
 {
     int lastX = playerX;
@@ -136,17 +137,12 @@ void Move(bool allowExitOnNonDirectionalInput = true)
             break;
     }
 
+    // Terminate loop execution if an unsupported key is entered
     if (allowExitOnNonDirectionalInput && key != ConsoleKey.UpArrow && key != ConsoleKey.DownArrow && key != ConsoleKey.LeftArrow && key != ConsoleKey.RightArrow)
     {
       Console.Clear();
-      Console.WriteLine("Oops! Unsupported key entered. Did you want to exit the game? Press 'Y' to exit or any other key to continue playing.");
-      if (Console.ReadKey(true).Key == ConsoleKey.Y)
-      {
-        shouldExit = true;
-      } else
-      {
-        shouldExit = false;
-      }
+      Console.WriteLine("Unsupported key entered. Exiting game...");
+      shouldExit = true;
     }
 
     // Clear the characters at the previous position
