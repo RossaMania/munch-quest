@@ -48,8 +48,8 @@ int foodX = 0;
 int foodY = 0;
 
 // Available player and food strings
-string[] states = {"('-')", "(^-^)", "(X_X)"};
-string[] foods = {"@@@@@", "$$$$$", "#####"};
+string[] states = { "('-')", "(^-^)", "(X_X)" };
+string[] foods = { "@@@@@", "$$$$$", "#####" };
 
 // Current player string displayed in the Console
 string player = states[0];
@@ -60,118 +60,141 @@ int food = 0;
 InitializeGame();
 while (!shouldExit)
 {
-    Move();
-    TerminalResized();
+  Move();
+  TerminalResized();
 
 
-   //Terminate loop execution if the terminal was resized.
-    if (TerminalResized())
-    {
-        Console.Clear();
-        Console.WriteLine("Uh oh! Console was resized! Exiting game...");
-        break;
-    }
+  //Terminate loop execution if the terminal was resized.
+  if (TerminalResized())
+  {
+    Console.Clear();
+    Console.WriteLine("Uh oh! Console was resized! Exiting game...");
+    break;
+  }
 }
 
 // Returns true if the Terminal was resized
 bool TerminalResized()
 {
-    return height != Console.WindowHeight - 1 || width != Console.WindowWidth - 5;
+  return height != Console.WindowHeight - 1 || width != Console.WindowWidth - 5;
 }
 
 // Displays random food at a random location
 void ShowFood()
 {
-    // Update food to a random index
-    food = random.Next(0, foods.Length);
+  // Update food to a random index
+  food = random.Next(0, foods.Length);
 
-    // Update food position to a random location
-    foodX = random.Next(0, width - player.Length);
-    foodY = random.Next(0, height - 1);
+  // Update food position to a random location
+  foodX = random.Next(0, width - player.Length);
+  foodY = random.Next(0, height - 1);
 
-    // Display the food at the location
-    Console.SetCursorPosition(foodX, foodY);
-    Console.Write(foods[food]);
+  // Display the food at the location
+  Console.SetCursorPosition(foodX, foodY);
+  Console.Write(foods[food]);
 }
 
 // Changes the player to match the food consumed
 void ChangePlayer()
 {
-    player = states[food];
-    Console.SetCursorPosition(playerX, playerY);
-    Console.Write(player);
+  player = states[food];
+  Console.SetCursorPosition(playerX, playerY);
+  Console.Write(player);
 
-    if (food == 2)
-    {
-        // Freeze player movement
-        FreezePlayer();
-    }
+  // Freeze player if sick.
+  if (SickState())
+  {
+    FreezePlayer();
+  }
+
+
 }
 
 // Temporarily stops the player from moving
 void FreezePlayer()
 {
-    System.Threading.Thread.Sleep(1000);
-    player = states[0];
+  System.Threading.Thread.Sleep(1000);
+  player = states[0];
 }
 
-// Reads directional input from the Console and moves the player.
+// Reads directional input from the console and moves the player.
 // The allowExitOnNonDirectionalInput optional parameter allows the game to exit if nondirectional key is pressed.
-void Move(bool allowExitOnNonDirectionalInput = true)
+// The turboMode optional parameter allows the player to move faster if certain food is eaten.
+void Move(bool allowExitOnNonDirectionalInput = false, bool turboMode = true)
 {
-    int lastX = playerX;
-    int lastY = playerY;
+  int lastX = playerX;
+  int lastY = playerY;
 
-    var key = Console.ReadKey(true).Key;
+  var key = Console.ReadKey(true).Key;
 
+  switch (key)
+  {
+    case ConsoleKey.UpArrow:
+      playerY--;
+      break;
+    case ConsoleKey.DownArrow:
+      playerY++;
+      break;
+    case ConsoleKey.LeftArrow:
+      playerX--;
+      break;
+    case ConsoleKey.RightArrow:
+      playerX++;
+      break;
+    case ConsoleKey.Escape:
+      shouldExit = true;
+      break;
+  }
+
+  // Terminate loop execution if an unsupported key is entered
+  if (allowExitOnNonDirectionalInput && key != ConsoleKey.UpArrow && key != ConsoleKey.DownArrow && key != ConsoleKey.LeftArrow && key != ConsoleKey.RightArrow)
+  {
+    Console.Clear();
+    Console.WriteLine("Unsupported key entered. Exiting game...");
+    shouldExit = true;
+  }
+
+  // Increase movement speed if certain food is eaten
+  if (FastState() && turboMode)
+  {
     switch (key)
     {
-    case ConsoleKey.UpArrow:
-            playerY--;
-            break;
-        case ConsoleKey.DownArrow:
-            playerY++;
-            break;
-        case ConsoleKey.LeftArrow:
-            playerX--;
-            break;
-        case ConsoleKey.RightArrow:
-            playerX++;
-            break;
-        case ConsoleKey.Escape:
-            shouldExit = true;
-            break;
+      case ConsoleKey.LeftArrow:
+        playerX -= 3;
+        break;
+      case ConsoleKey.RightArrow:
+        playerX += 3;
+        break;
     }
+  }
 
-    // Terminate loop execution if an unsupported key is entered
-    if (allowExitOnNonDirectionalInput && key != ConsoleKey.UpArrow && key != ConsoleKey.DownArrow && key != ConsoleKey.LeftArrow && key != ConsoleKey.RightArrow)
-    {
-      Console.Clear();
-      Console.WriteLine("Unsupported key entered. Exiting game...");
-      shouldExit = true;
-    }
+  // Reset turbo mode (if true) if certain food is eaten
+   if (NormalState())
+  {
+    turboMode = false;
+  }
 
-    // Clear the characters at the previous position
-    Console.SetCursorPosition(lastX, lastY);
-    for (int i = 0; i < player.Length; i++)
-    {
-        Console.Write(" ");
-    }
+  // Clear the characters at the previous position
+  Console.SetCursorPosition(lastX, lastY);
+  for (int i = 0; i < player.Length; i++)
+  {
+    Console.Write(" ");
+  }
 
-    // Keep player position within the bounds of the Terminal window
-    playerX = (playerX < 0) ? 0 : (playerX >= width ? width : playerX);
-    playerY = (playerY < 0) ? 0 : (playerY >= height ? height : playerY);
+  // Keep player position within the bounds of the Terminal window
+  playerX = (playerX < 0) ? 0 : (playerX >= width ? width : playerX);
+  playerY = (playerY < 0) ? 0 : (playerY >= height ? height : playerY);
 
-    // Draw the player at the new location
-    Console.SetCursorPosition(playerX, playerY);
-    Console.Write(player);
+  // Draw the player at the new location
+  Console.SetCursorPosition(playerX, playerY);
+  Console.Write(player);
 
-    // Check if the player consumed the food
-    if (FoodIsEaten())
-    {
-        ChangePlayer();
-        ShowFood();
-    }
+  // Check if the player consumed the food
+  if (FoodIsEaten())
+  {
+    ChangePlayer();
+    ShowFood();
+  }
 }
 
 bool FoodIsEaten()
@@ -179,12 +202,30 @@ bool FoodIsEaten()
   return playerX == foodX && playerY == foodY;
 }
 
+// Check if certain food is eaten to make player sick.
+bool SickState()
+{
+    return states[food] == states[2];
+}
+
+// Check if certain food is eaten to make player fast.
+bool FastState()
+{
+    return states[food] == states[1];
+}
+
+// Check if certain food is eaten to make player normal.
+bool NormalState()
+{
+    return states[food] == states[0];
+}
+
 // Clears the console, displays the food and player
 void InitializeGame()
 {
-    Console.Clear();
-    ShowFood();
-    Console.SetCursorPosition(0, 0);
-    Console.Write(player);
+  Console.Clear();
+  ShowFood();
+  Console.SetCursorPosition(0, 0);
+  Console.Write(player);
 }
 
