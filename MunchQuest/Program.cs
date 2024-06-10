@@ -68,7 +68,7 @@ while (!shouldExit)
     if (TerminalResized())
     {
         Console.Clear();
-        Console.WriteLine("Terminal resized! Exiting game...");
+        Console.WriteLine("Uh oh! Console was resized! Exiting game...");
         break;
     }
 }
@@ -110,28 +110,43 @@ void FreezePlayer()
 }
 
 // Reads directional input from the Console and moves the player
-void Move()
+void Move(bool allowExitOnNonDirectionalInput = true)
 {
     int lastX = playerX;
     int lastY = playerY;
 
-    switch (Console.ReadKey(true).Key)
+    var key = Console.ReadKey(true).Key;
+
+    switch (key)
     {
-        case ConsoleKey.UpArrow:
+    case ConsoleKey.UpArrow:
             playerY--;
             break;
-		case ConsoleKey.DownArrow:
+        case ConsoleKey.DownArrow:
             playerY++;
             break;
-		case ConsoleKey.LeftArrow:
+        case ConsoleKey.LeftArrow:
             playerX--;
             break;
-		case ConsoleKey.RightArrow:
+        case ConsoleKey.RightArrow:
             playerX++;
             break;
-		case ConsoleKey.Escape:
+        case ConsoleKey.Escape:
             shouldExit = true;
             break;
+    }
+
+    if (allowExitOnNonDirectionalInput && key != ConsoleKey.UpArrow && key != ConsoleKey.DownArrow && key != ConsoleKey.LeftArrow && key != ConsoleKey.RightArrow)
+    {
+      Console.Clear();
+      Console.WriteLine("Oops! Unsupported key entered. Did you want to exit the game? Press 'Y' to exit or any other key to continue playing.");
+      if (Console.ReadKey(true).Key == ConsoleKey.Y)
+      {
+        shouldExit = true;
+      } else
+      {
+        shouldExit = false;
+      }
     }
 
     // Clear the characters at the previous position
