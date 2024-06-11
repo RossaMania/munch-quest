@@ -1,32 +1,4 @@
-﻿// Project specification
-// The Starter code includes the following code features:
-
-// - The code declares the following variables:
-//     - Variables to determine the size of the Terminal window.
-//     - Variables to track the locations of the player and food.
-//     - Arrays `states` and `foods` to provide available player and food appearances
-//     - Variables to track the current player and food appearance
-
-// - The code provides the following methods:
-//     - A method to determine if the Terminal window was resized.
-//     - A method to display a random food appearance at a random location.
-//     - A method that changes the player appearance to match the food consumed.
-//     - A method that temporarily freezes the player movement.
-//     - A method that moves the player according to directional input.
-//     - A method that sets up the initial game state.
-
-// - The code doesn't call the methods correctly to make the game playable. The following features are missing:
-//     - Code to determine if the player has consumed the food displayed.
-//     - Code to determine if the food consumed should freeze player movement.
-//     - Code to determine if the food consumed should increase player movement.
-//     - Code to increase movement speed.
-//     - Code to redisplay the food after it's consumed by the player.
-//     - Code to terminate execution if an unsupported key is entered.
-//     - Code to terminate execution if the terminal was resized.
-
-// Your goal in this challenge is to use the existing features and create the missing features to make the game playable.
-
-using System;
+﻿using System;
 
 namespace MunchQuest
 {
@@ -36,7 +8,7 @@ namespace MunchQuest
         {
             // Create a new instance of the game
             Game game = new Game();
-            
+
             // Start the game
             game.Start();
         }
@@ -46,26 +18,26 @@ namespace MunchQuest
     {
         // Random number generator for food placement and selection
         private Random random = new Random();
-        
+
         // Flag to determine if the game should exit
         private bool shouldExit = false;
-        
+
         // Variables to store the height and width of the console window
         private int height, width;
-        
+
         // Variables to store the player's position
         private int playerX, playerY;
-        
+
         // Variables to store the food's position
         private int foodX, foodY;
-        
+
         // Arrays to store the different states of the player and food
         private string[] states = { "('-')", "(^-^)", "(X_X)" };
         private string[] foods = { "@@@@@", "$$$$$", "#####" };
-        
+
         // Current player state
         private string player = "('-')";
-        
+
         // Index of the current food
         private int food = 0;
 
@@ -74,13 +46,13 @@ namespace MunchQuest
         {
             // Initialize the game state
             InitializeGame();
-            
+
             // Main game loop
             while (!shouldExit)
             {
                 // Handle player movement
                 Move();
-                
+
                 // Check if the terminal has been resized
                 if (TerminalResized())
                 {
@@ -97,17 +69,17 @@ namespace MunchQuest
         {
             // Hide the cursor in the console
             Console.CursorVisible = false;
-            
+
             // Set the height and width based on the current console window size
             height = Console.WindowHeight - 1;
             width = Console.WindowWidth - 5;
-            
+
             // Clear the console
             Console.Clear();
-            
+
             // Display the initial food
             ShowFood();
-            
+
             // Display the initial player position
             Console.SetCursorPosition(0, 0);
             Console.Write(player);
@@ -125,11 +97,11 @@ namespace MunchQuest
         {
             // Select a random food index
             food = random.Next(0, foods.Length);
-            
+
             // Select random positions for the food
             foodX = random.Next(0, width - player.Length);
             foodY = random.Next(0, height - 1);
-            
+
             // Set the cursor position and display the food
             Console.SetCursorPosition(foodX, foodY);
             Console.Write(foods[food]);
@@ -140,7 +112,7 @@ namespace MunchQuest
         {
             // Update the player state based on the food consumed
             player = states[food];
-            
+
             // Set the cursor position and display the new player state
             Console.SetCursorPosition(playerX, playerY);
             Console.Write(player);
@@ -157,7 +129,7 @@ namespace MunchQuest
         {
             // Pause the game for 1 second
             System.Threading.Thread.Sleep(1000);
-            
+
             // Reset the player state to normal
             player = states[0];
         }
@@ -168,7 +140,7 @@ namespace MunchQuest
             // Store the last known position of the player
             int lastX = playerX;
             int lastY = playerY;
-            
+
             // Read a key from the console without displaying it
             var key = Console.ReadKey(true).Key;
 
